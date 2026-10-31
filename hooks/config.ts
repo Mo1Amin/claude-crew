@@ -111,10 +111,18 @@ export function crewSection(config: CrewConfig, home: string): string {
       lines.push(`- ${m.name}: subagent_type "crew:${m.id}", ${m.model} at ${m.effort} effort${m.job ? ` (${m.job})` : ''}`)
     }
   }
-  if (config.connections.length > 0) {
+  const codex = config.connections.filter(c => c.kind === 'codex')
+  const others = config.connections.filter(c => c.kind !== 'codex')
+  for (const c of codex) {
+    lines.push(
+      `${c.name} is Codex, and you run it yourself: never send the person to it. Follow "Running Codex" in ${crewDir(home)}/HANDSHAKE.md.`,
+      'If Codex CLI is missing or signed out, tell the person to run `npm install -g @openai/codex` and `codex login` once.',
+    )
+  }
+  if (others.length > 0) {
     lines.push(
       'Other agents connected through shared files, which you cannot message directly:',
-      ...config.connections.map(c => `- ${c.name}: id "${c.id}", ${c.kind}`),
+      ...others.map(c => `- ${c.name}: id "${c.id}", ${c.kind}`),
       `To give one a task, follow ${crewDir(home)}/HANDSHAKE.md: add a row to bus/tasks.json with its id in "to", then tell the person to ask that agent to check its crew tasks.`,
     )
   }

@@ -69,6 +69,8 @@ test('the crew reaches the agents and the lead by its own names', async () => {
   const section = crewSection(CONFIG, '/home/me')
   expect(section).toContain('subagent_type "crew:nova"')
   expect(section).toContain('/home/me/.claude/crew/HANDSHAKE.md')
+  expect(section).toContain('you run it yourself')
+  expect(section).not.toContain('id "codex"')
 })
 
 test('the words follow the language', async () => {

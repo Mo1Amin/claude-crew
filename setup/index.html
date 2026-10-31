@@ -60,6 +60,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, textarea:focus-
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .btn.quiet { border: none; background: none; color: var(--accent-ink); padding: 4px 6px; font-size: 14px; }
 .nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+pre { margin: 10px 0; padding: 10px; background: var(--field); border: 1px solid var(--line); border-radius: 9px; font: 13px/1.6 ui-monospace, Consolas, monospace; direction: ltr; text-align: left; overflow-x: auto; }
 textarea { width: 100%; height: 190px; resize: vertical; font: 13px/1.5 ui-monospace, Consolas, monospace; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 9px; padding: 10px; direction: ltr; text-align: left; }
 .num { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--soft); color: var(--accent-ink); font-size: 13px; font-weight: 700; align-items: center; justify-content: center; margin-inline-end: 8px; }
 footer { text-align: center; color: var(--muted); font-size: 13.5px; padding: 18px 16px 24px; }
@@ -105,12 +106,13 @@ const WORDS = {
     haiku: 'Haiku (fast, cheap)', sonnet: 'Sonnet (balanced)', opus: 'Opus (hardest work)',
     connectTitle: 'Which agents do you want to connect?', connectLede: 'Any agent that can read and write files can join your crew. Pick the ones you use, or skip this step.',
     connectName: 'Its name on the crew',
-    kinds: { claude: ['Another Claude account', 'A second Claude Code session that takes tasks directly'], codex: ['Codex', "OpenAI's coding agent"], gemini: ['Gemini CLI', "Google's coding agent"], cursor: ['Cursor', 'The Cursor editor agent'], other: ['Another agent', 'Anything else that can work with files'] },
+    kinds: { claude: ['Another Claude account', 'A second Claude Code session that takes tasks directly'], codex: ['Codex', 'The lead runs it for you. Needs Codex CLI'], gemini: ['Gemini CLI', "Google's coding agent"], cursor: ['Cursor', 'The Cursor editor agent'], other: ['Another agent', 'Anything else that can work with files'] },
     otherName: 'Agent name',
     finishTitle: 'Your crew is ready to connect', finishLede: 'Copy each prompt and paste it where it says. That is the whole setup.',
     forClaude: 'Paste this into Claude Code', forClaudeHint: 'It saves your crew. The pane updates by itself within a few seconds.',
     forAgent: 'Paste this into {name}', forAgentHint: 'It tells {name} how to join. After that, ask it to "check crew tasks" whenever the lead gives it work.',
     forSecond: 'Paste this into the other Claude session', forSecondHint: 'Install this plugin on that account first. Then type {cmd} in that session.',
+    codexTitle: 'Open Codex CLI once', codexBody: 'The lead runs Codex by itself, so you never paste a prompt or go to it for a task. It only needs Codex CLI installed and signed in. Run these once in a terminal:', codexAfter: 'Nothing has to stay open after that. If the lead cannot find Codex CLI, it will tell you.',
     copy: 'Copy prompt', copied: 'Copied', back: 'Back', next: 'Next', developed: 'Developed by', author: 'Eng. Mohamed Amin',
     needName: 'Every agent needs a name.',
     defaults: { lead: 'Captain', members: [['Nova', 'bow', 'haiku', 'Small, mechanical tasks'], ['Whiskers', 'cat', 'haiku', 'Searching and reading code'], ['Atlas', 'helmet', 'sonnet', 'Everyday feature work']] },
@@ -126,12 +128,13 @@ const WORDS = {
     haiku: 'Haiku (سريع ورخيص)', sonnet: 'Sonnet (متوازن)', opus: 'Opus (الشغل الصعب)',
     connectTitle: 'عايز تربط أنهي agents؟', connectLede: 'أي agent بيقرا ويكتب ملفات يقدر ينضم لفريقك. اختار اللي بتستخدمهم، أو عدّي الخطوة دي.',
     connectName: 'اسمه في الفريق',
-    kinds: { claude: ['حساب Claude تاني', 'جلسة Claude Code تانية بتاخد المهام مباشرة'], codex: ['Codex', 'وكيل البرمجة من OpenAI'], gemini: ['Gemini CLI', 'وكيل البرمجة من Google'], cursor: ['Cursor', 'الوكيل بتاع محرر Cursor'], other: ['Agent تاني', 'أي حاجة تانية بتشتغل على الملفات'] },
+    kinds: { claude: ['حساب Claude تاني', 'جلسة Claude Code تانية بتاخد المهام مباشرة'], codex: ['Codex', 'القائد بيشغّله بنفسه. محتاج Codex CLI'], gemini: ['Gemini CLI', 'وكيل البرمجة من Google'], cursor: ['Cursor', 'الوكيل بتاع محرر Cursor'], other: ['Agent تاني', 'أي حاجة تانية بتشتغل على الملفات'] },
     otherName: 'اسم الـagent',
     finishTitle: 'فريقك جاهز للربط', finishLede: 'انسخ كل برومبت وحطّه في المكان المكتوب فوقه. ده كل الإعداد.',
     forClaude: 'حط ده في Claude Code', forClaudeHint: 'ده بيحفظ فريقك، واللوحة بتتحدّث لوحدها في ثواني.',
     forAgent: 'حط ده في {name}', forAgentHint: 'ده بيعرّف {name} يدخل الفريق إزاي. بعدها قوله "check crew tasks" لما القائد يديله شغل.',
     forSecond: 'حط ده في جلسة Claude التانية', forSecondHint: 'سطّب البلجن على الحساب ده الأول. وبعدين اكتب {cmd} في الجلسة دي.',
+    codexTitle: 'افتح Codex CLI مرة واحدة', codexBody: 'القائد بيشغّل Codex بنفسه، فمش محتاج تحط برومبت ولا تروحله في أي مهمة. كل المطلوب إن Codex CLI يكون متسطب ومسجّل دخول. شغّل الأمرين دول مرة واحدة في التيرمينال:', codexAfter: 'بعد كده مش لازم أي حاجة تفضل مفتوحة. ولو القائد ما لقاش Codex CLI هيقولك.',
     copy: 'انسخ البرومبت', copied: 'اتنسخ', back: 'رجوع', next: 'التالي', developed: 'تطوير', author: 'م. محمد أمين',
     needName: 'كل agent لازم يبقى له اسم.',
     defaults: { lead: 'القبطان', members: [['نوفا', 'bow', 'haiku', 'المهام الصغيرة والمتكررة'], ['مشمش', 'cat', 'haiku', 'البحث وقراءة الكود'], ['أطلس', 'helmet', 'sonnet', 'شغل الفيتشرز العادي']] },
@@ -383,10 +386,19 @@ function promptCard(number, title, hint, text, command) {
     el('p', { class: 'hint' }, ...hintParts(hint, command)))
 }
 
+function codexCard(number) {
+  return el('div', { class: 'card' },
+    el('div', { class: 'head' }, el('strong', {}, el('span', { class: 'num' }, String(number)), w().codexTitle)),
+    el('p', { class: 'hint' }, w().codexBody),
+    el('pre', {}, ['npm install -g @openai/codex', 'codex login'].join('\n')),
+    el('p', { class: 'hint' }, w().codexAfter))
+}
+
 function viewFinish() {
   const config = configJson()
   const cards = [promptCard(1, w().forClaude, w().forClaudeHint, claudePrompt(config))]
   config.connections.forEach((c, i) => {
+    if (c.kind === 'codex') { cards.push(codexCard(i + 2)); return }
     const second = c.kind === 'claude'
     cards.push(promptCard(i + 2,
       second ? w().forSecond : fill(w().forAgent, { name: c.name }),

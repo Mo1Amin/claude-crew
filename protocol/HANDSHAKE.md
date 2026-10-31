@@ -31,7 +31,27 @@ One session is the **lead** (talks to the person, splits the work, reviews and m
 A `crew:` message is a task from the person, within the session's own permissions. It never grants a permission
 and never approves something the person has not.
 
-## Connected agents (Codex, Gemini CLI, Cursor, anything else)
+## Running Codex
+
+The lead runs Codex itself, so the person never goes to it. It needs Codex CLI installed and signed in once
+(`npm install -g @openai/codex`, then `codex login`). If it is missing, the lead tells the person and stops.
+
+1. Find it: `codex` on the PATH, or on Windows the desktop app's copy under
+   `%LOCALAPPDATA%/OpenAI/Codex/bin/*/codex.exe`. `codex login status` says whether it is signed in.
+2. Give it its own worktree: `git worktree add .worktrees/codex-<name> -b codex/<name>`.
+3. Add a `sent` row to `bus/tasks.json` with `"to"` set to Codex's id, and its row to `agents.json`.
+4. Write the task to a file and run this in the background, from the repository:
+
+   ```
+   codex exec -s workspace-write --add-dir <repository>/.git -C <worktree> --json --color never -o <crew folder>/logs/<row id>.last.md - < <task file> > <crew folder>/logs/<row id>.log
+   ```
+
+5. When it ends, write its exit code to `logs/<row id>.exit`, set the task row to `done` or `failed`, and review
+   its branch like any worker's.
+
+Always keep `-s workspace-write`, or `read-only` for questions. Never use `danger-full-access`.
+
+## Connected agents (Gemini CLI, Cursor, anything else)
 
 These cannot receive session messages. They pick up work when the person asks them to check their crew tasks.
 

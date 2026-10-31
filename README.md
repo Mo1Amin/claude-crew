@@ -42,7 +42,16 @@ Nothing leaves your machine: the page runs from a local file, and your crew live
 
 Agents share the folder `~/.claude/crew/`: a task list, a list of running agents, and one log per agent. Any agent that can read and write files can join. The full protocol is in [protocol/HANDSHAKE.md](protocol/HANDSHAKE.md).
 
-Connected agents cannot receive messages from Claude Code, so the lead adds a task and you ask that agent to "check crew tasks". Two Claude Code sessions can message each other directly.
+**Codex:** the lead runs Codex by itself, so you never go to it for a task. Open Codex CLI once to install and sign in, and nothing has to stay open after that:
+
+```
+npm install -g @openai/codex
+codex login
+```
+
+**Two Claude Code sessions** message each other directly.
+
+**Gemini CLI, Cursor and other agents** cannot receive messages from Claude Code, so the lead adds a task and you ask that agent to "check crew tasks".
 
 The shared files grant no permissions. Each agent keeps its own rules and its own approval prompts. The files carry no locking, so two agents writing at the same moment can lose a row.
 
