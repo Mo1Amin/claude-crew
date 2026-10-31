@@ -1,0 +1,9 @@
+{
+  "name": "crew",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mohamed Amin (1l0mt)"
+  },
+  "description": "A live pane of your agents, each with its own name and character, plus a setup page that names them and connects other agents to Claude Code.",
+  "types": "./types/index.d.ts"
+}
